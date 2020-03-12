@@ -1,6 +1,6 @@
 from ast import AST 
 
-from types import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF
+from tokens import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF
 
 
 class AST:

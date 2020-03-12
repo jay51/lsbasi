@@ -1,5 +1,5 @@
 
-from types import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF
+from tokens import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF
 from lexer import Lexer
 from parser import Parser
 
@@ -42,20 +42,17 @@ class Interpreter(NodeVisitor):
 
 
 
-while True:
-    text = input("cal> ")
-    if(text == "exit"):
-        break
-    else:
-        lex = Lexer(text) # make tokens 
-        parser = Parser(lex) # make AST from tokens
-        interpreter = Interpreter(parser) # interpret AST
-        result = interpreter.interpret()
-        print(result)
-
-
-
-
+if(__name__ == "__main__"):
+    while True:
+        text = input("cal> ")
+        if(text == "exit"):
+            break
+        else:
+            lex = Lexer(text) # make tokens 
+            parser = Parser(lex) # make AST from tokens
+            interpreter = Interpreter(parser) # interpret AST
+            result = interpreter.interpret()
+            print(result)
 
 
 
