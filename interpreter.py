@@ -10,10 +10,8 @@ class NodeVisitor:
         visitor = getattr(self, method_name, self.generic_visit)
         return visitor(node)
 
-
     def generic_visit(self, node):
         raise Exception('No visit_{} method'.format(type(node).__name__))
-
 
 
 
@@ -31,6 +29,14 @@ class Interpreter(NodeVisitor):
         elif(node.op.type == DIV):
             return self.visit(node.left) / self.visit(node.right)
 
+    def visit_UnaryOp(self, node):
+        op = node.op.type
+        if op == PLUS:
+            return +self.visit(node.expr)
+        elif op == MINUS:
+            return -self.visit(node.expr)
+
+
     def visit_Num(self, node):
         return node.value
 
@@ -38,7 +44,6 @@ class Interpreter(NodeVisitor):
     # TREE IS A BINOP NODE OF LEFT AND RIGHT NODES
         tree = self.parser.parse()
         return self.visit(tree)
-
 
 
 
@@ -53,6 +58,5 @@ if(__name__ == "__main__"):
             interpreter = Interpreter(parser) # interpret AST
             result = interpreter.interpret()
             print(result)
-
 
 

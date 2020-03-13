@@ -8,6 +8,12 @@ class AST:
 
 
 
+class UnaryOp(AST):
+    def __init__(self, op, expr):
+        self.op = op 
+        self.token = op
+        self.expr = expr
+
 
 
 class BinOp(AST):
@@ -47,7 +53,19 @@ class Parser:
 
 
     def factor(self):
+        """factor : (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN"""
+
         token = self.current_token
+        if(token.type == PLUS):
+            self.eat(PLUS)
+            node = UnaryOp(token, self.factor())
+            return node
+
+        if(token.type == MINUS):
+            self.eat(MINUS)
+            node = UnaryOp(token, self.factor())
+            return node
+
         if(token.type == INTEGER):
             self.eat(INTEGER)
             return Num(token)
