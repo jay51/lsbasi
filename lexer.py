@@ -1,17 +1,5 @@
-
-from tokens import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF
-
-
-class Token:
-    def __init__(self, type, value):
-        self.type = type
-        self.value = value
-
-    def __str__(self):
-        return "Token({type}, {value})".format(type=self.type, value=self.value)
-
-    def __repr__(self):
-        return self.__str__()
+from tokens import Token
+from tokens import Tokens
 
 
 
@@ -35,11 +23,18 @@ class Lexer:
     def advance(self):
         """ get the next char in input string """
         self.pos += 1
-        if(self.pos > len(self.text) -1): # don't know it's len(text) -1
+        if(self.pos > len(self.text) -1):
             # end of input
             self.curr_char = None
         else:
             self.curr_char = self.text[self.pos]
+
+
+    def peek(self):
+        peek_pos = self.pos + 1
+        if(peek_pos > len(self.text)-1):
+            return None
+        return self.text[peek_pos]
 
 
     def skip_whitespace(self):
@@ -58,6 +53,21 @@ class Lexer:
         return int(number)
 
 
+    def _id(self):
+        """ handel identifiers and reserved keywords """
+        result = ""
+        while(self.curr_char is not None and self.curr_char.isalnum()):
+            result += self.curr_char
+            self.advance()
+
+        # return a Token
+        if(hasattr(Tokens, result)):
+            return getattr(Tokens, result)
+
+        return Token(Tokens.ID, result)
+
+
+
     def error(self):
         raise Exception("Invalid charactor")
 
@@ -72,35 +82,52 @@ class Lexer:
                 continue
 
             if self.curr_char.isdigit():
-                return Token(INTEGER, self.integer())
+                return Token(Tokens.INTEGER, self.integer())
 
             if self.curr_char == "+":
                 self.advance()
-                return Token(PLUS, "+")
+                return Token(Tokens.PLUS, "+")
 
             if self.curr_char == "-":
                 self.advance()
-                return Token(MINUS, "-")
+                return Token(Tokens.MINUS, "-")
 
             if self.curr_char == "*":
                 self.advance()
-                return Token(MUL, "*")
+                return Token(Tokens.MUL, "*")
 
             if self.curr_char == "/":
                 self.advance()
-                return Token(DIV, "/")
+                return Token(Tokens.DIV, "/")
 
             if self.curr_char == "(":
                 self.advance()
-                return Token(LPAREN, "(")
+                return Token(Tokens.LPAREN, "(")
 
             if self.curr_char == ")":
                 self.advance()
-                return Token(RPAREN, ")")
+                return Token(Tokens.RPAREN, ")")
+
+            if self.curr_char.isalpha():
+                return self._id()
+
+            if self.curr_char == ":" and self.peek() == "=":
+                self.advance()
+                self.advance()
+                return Token(Tokens.ASSIGN, ":=")
+
+            if self.curr_char == ";":
+                self.advance()
+                return Token(Tokens.SEMI, ";")
+
+            if self.curr_char == ".":
+                self.advance()
+                return Token(Tokens.DOT, ".")
+
 
             self.error()
 
-        return Token(EOF, None)
+        return Token(Tokens.EOF, None)
 
 
 
