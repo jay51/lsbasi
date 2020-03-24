@@ -52,7 +52,9 @@ class Interpreter(NodeVisitor):
             return self.visit(node.left) - self.visit(node.right)
         elif(node.op.type == Tokens.MUL):
             return self.visit(node.left) * self.visit(node.right)
-        elif(node.op.type == Tokens.DIV):
+        elif(node.op.type == Tokens.FLOATDIV):
+            return self.visit(node.left) / self.visit(node.right) # float DIV
+        elif(node.op.type == Tokens.DIV.type):
             return self.visit(node.left) // self.visit(node.right)
 
     def visit_UnaryOp(self, node):

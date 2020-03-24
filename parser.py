@@ -202,12 +202,17 @@ class Parser:
         """ do MUL, DIV before PLUS, MINUS ..."""
         node = self.factor()
 
-        while(self.current_token.type in (Tokens.MUL, Tokens.DIV)):
+        while(self.current_token.type in (Tokens.MUL, Tokens.FLOATDIV, Tokens.DIV.type)):
             token = self.current_token
             if(token.type == Tokens.MUL):
                 self.eat(Tokens.MUL)
-            elif(token.type == Tokens.DIV):
-                self.eat(Tokens.DIV)
+
+            elif(token.type == Tokens.FLOATDIV):
+                self.eat(Tokens.FLOATDIV)
+
+            elif(token.type == Tokens.DIV.type): # INT DIV
+                self.eat(Tokens.DIV.type)
+
 
             node = BinOp(left=node, op=token, right=self.factor())
 

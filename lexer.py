@@ -98,7 +98,7 @@ class Lexer:
 
             if self.curr_char == "/":
                 self.advance()
-                return Token(Tokens.DIV, "/")
+                return Token(Tokens.FLOATDIV, "/")
 
             if self.curr_char == "(":
                 self.advance()

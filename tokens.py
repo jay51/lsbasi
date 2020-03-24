@@ -17,7 +17,7 @@ class Tokens:
     PLUS        = "PLUS"
     MINUS       = "MINUS"
     MUL         = "MUL"
-    DIV         = "DIV"
+    FLOATDIV    = "DIV"
     LPAREN      = "("
     RPAREN      = ")"
     EOF         = "EOF"
@@ -28,6 +28,7 @@ class Tokens:
     # RESERVED_KEYWORDS
     BEGIN       = Token("BEGIN", "BEGIN")
     END         = Token("END", "END")
+    DIV         = Token("INTDIV", "//")
     
     
     
