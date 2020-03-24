@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from tokens import Tokens
 from lexer import Lexer
 from parser import Parser
@@ -73,7 +75,7 @@ class Interpreter(NodeVisitor):
 
 
 if(__name__ == "__main__"):
-    if(len(sys.argv) == 2): # python interpreter <filename>
+    if(len(sys.argv) == 2):
         print(sys.argv[1])
         with open(sys.argv[1], "r") as f:
             file_stream = f.read()
