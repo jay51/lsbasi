@@ -1,7 +1,12 @@
+PROGRAM Part10;
+VAR
+    number  : INTEGER;
+    x       : INTEGER;
+
 BEGIN
 
     BEGIN
-        number := 2;
+        number := 2.2;
         a := number;
         b := (10 * a + 10 * number / 4) DIV 2;
         c := a - - b

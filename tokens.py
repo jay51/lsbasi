@@ -13,11 +13,14 @@ class Token:
 
 class Tokens:
     
-    INTEGER     = "INTEGER"
+    INT_CONST   = "INTEGER_CONST"
+    REAL_CONST  = "REAL_CONST"
     PLUS        = "PLUS"
     MINUS       = "MINUS"
     MUL         = "MUL"
     FLOATDIV    = "DIV"
+    COLON       = ":"
+    COMMA       = ","
     LPAREN      = "("
     RPAREN      = ")"
     EOF         = "EOF"
@@ -25,10 +28,16 @@ class Tokens:
     ASSIGN      = "ASSIGN"
     SEMI        = "SEMI"
     DOT         = "DOT"
+
     # RESERVED_KEYWORDS
+    PROGRAM     = Token("PROGRAM", "PROGRAM")
+    VAR         = Token("VAR", "VAR")
+    INTEGER     = Token("INTEGER", "INTEGER") # VAR TYPE
+    REAL        = Token("REAL", "REAL") # VAR TYPE
     BEGIN       = Token("BEGIN", "BEGIN")
     END         = Token("END", "END")
     DIV         = Token("INTDIV", "//")
+    # DIV         = Token("INTEGER_DIV", "DIV"),
     
     
     

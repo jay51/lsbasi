@@ -43,14 +43,33 @@ class Lexer:
             self.advance()
 
 
-    def integer(self):
-        """ return (multidigit) int from input """
+    def skip_comment(self):
+        """ get the next char in input that is not a comment """
+        while(self.curr_char != "}"):
+            self.advance()
+        self.advance() # skip closing curly
+
+
+    def number(self):
+        """ return (multidigit) int or float """
         number = ""
         while(self.curr_char is not None and self.curr_char.isdigit()):
             number += self.curr_char
             self.advance()
 
-        return int(number)
+        if(self.curr_char == "."):
+            number += self.curr_char
+            self.advance()
+
+            while(self.curr_char is not None and self.curr_char.isdigit()):
+                number += self.curr_char
+                self.advance()
+
+            token = Token(Tokens.REAL_CONST, float(number))
+        else:
+            token = Token(Tokens.INT_CONST, int(number))
+
+        return token
 
 
     def _id(self):
@@ -81,8 +100,18 @@ class Lexer:
                 self.skip_whitespace()
                 continue
 
+            if self.curr_char == "{":
+                self.advance()
+                self.skip_comment()
+                continue
+
             if self.curr_char.isdigit():
-                return Token(Tokens.INTEGER, self.integer())
+                return self.number()
+
+
+            if self.curr_char == ",":
+                self.advance()
+                return Token(Tokens.COMMA, ",")
 
             if self.curr_char == "+":
                 self.advance()
@@ -111,10 +140,16 @@ class Lexer:
             if self.curr_char.isalpha():
                 return self._id()
 
+
             if self.curr_char == ":" and self.peek() == "=":
                 self.advance()
                 self.advance()
                 return Token(Tokens.ASSIGN, ":=")
+
+            if self.curr_char == ":":
+                self.advance()
+                return Token(Tokens.COLON, ":")
+
 
             if self.curr_char == ";":
                 self.advance()

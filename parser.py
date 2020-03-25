@@ -6,6 +6,9 @@ class AST:
     pass
 
 
+class NoOp(AST):
+    pass
+
 
 class UnaryOp(AST):
     def __init__(self, op, expr):
@@ -54,8 +57,32 @@ class Var(AST):
 
 
 
-class NoOp(AST):
-    pass
+class Program(AST):
+    def __init__(self, name, block):
+        self.name = name
+        self.block = block
+
+
+class Block(AST):
+    def __init__(self, declarations, compound_statement):
+        self.declarations = declarations
+        self.compound_statement = compound_statement
+
+
+
+class VarDecl(AST):
+    def __init__(self, var_node, type_node):
+        self.var_node = var_node
+        self.type_node = type_node
+
+
+
+class Type(AST):
+    def __init__(self, token):
+        self.token = token
+
+
+        self.value = token.value
 
 
 
@@ -72,20 +99,86 @@ class Parser:
 
 
     def eat(self, token_type):
-        # print(f"curr: {self.current_token}, token_type: {token_type}")
+        print(f"curr: {self.current_token}, token_type: {token_type}")
         if(self.current_token.type == token_type):
             self.current_token = self.lexer.get_next_token()
         else:
             self.error()
-    
 
-    # PARSING PROGRAM TO COMPOUND STATMENTS (part 9)
+
     def program(self):
-        """ program: compound_statement DOT """
-        node = self.compound_statement()
+        """ program: PROGRAM variable SEMI block DOT"""
+        self.eat(Tokens.PROGRAM.type)
+        var_node = self.variable()
+        prog_name = var_node.value
+        self.eat(Tokens.SEMI)
+
+        block_node = self.block()
+        program_node = Program(prog_name, block_node)
         self.eat(Tokens.DOT)
+
+        return program_node
+
+
+    def block(self):
+        """ block: declarations compound_statement """
+        declaration_nodes = self.declarations()
+        compound_statement_node = self.compound_statement()
+        node = Block(declaration_nodes, compound_statement_node)
         return node
 
+
+    def declarations(self):
+        """ declarations: VAR (variable_declaration SEMI) +
+                        | empty
+        """
+        declarations = []
+        if(self.current_token.type == Tokens.VAR.type):
+            self.eat(Tokens.VAR.type)
+
+            while(self.current_token.type == Tokens.ID):
+                var_decl = self.variable_declaration()
+                declarations.extend(var_decl)
+                self.eat(Tokens.SEMI)
+
+        return declarations
+
+
+    def variable_declaration(self):
+        """ variable_declaration: ID (COMMA ID)* COLON type_spec """
+        var_nodes = [ Var(self.current_token) ] # FIRST ID
+        self.eat(Tokens.ID)
+
+        # pickup vars seprated by ,
+        while(self.current_token.type == Tokens.COMMA):
+            self.eat(Tokens.COMMA)
+            var_nodes.append(Var(self.current_token))
+            self.eat(Tokens.ID)
+
+        self.eat(Tokens.COLON)
+
+        type_node = self.type_spec()
+        var_declarations = [
+            VarDecl(var_node, type_node)
+            for var_node in var_nodes
+        ]
+
+        return var_declarations
+
+
+    # Do we need to eat the ;
+    def type_spec(self):
+        """ type_spec: INTEGER
+                    | REAL
+        """
+        token = self.current_token
+        if(token.type == Tokens.INTEGER.type):
+            self.eat(Tokens.INTEGER.type)
+        elif(token.type == Tokens.REAL.type):
+            self.eat(Tokens.REAL.type)
+
+        node = Type(token)
+        return node
 
 
     def compound_statement(self):
@@ -166,7 +259,8 @@ class Parser:
     def factor(self):
         """ factor : PLUS  factor
                     | MINUS factor
-                    | INTEGER
+                    | INTEGER_CONST
+                    | REAL_CONST
                     | LPAREN expr RPAREN
                     | variable
         """
@@ -182,8 +276,12 @@ class Parser:
             node = UnaryOp(token, self.factor())
             return node
 
-        if(token.type == Tokens.INTEGER):
-            self.eat(Tokens.INTEGER)
+        if(token.type == Tokens.INT_CONST):
+            self.eat(Tokens.INT_CONST)
+            return Num(token)
+
+        if(token.type == Tokens.REAL_CONST):
+            self.eat(Tokens.REAL_CONST)
             return Num(token)
 
         elif(token.type == Tokens.LPAREN):
@@ -199,7 +297,7 @@ class Parser:
 
 
     def term(self):
-        """ do MUL, DIV before PLUS, MINUS ..."""
+        """ term: factor ((MUL | INTDIV | FLOATDIV) factor """
         node = self.factor()
 
         while(self.current_token.type in (Tokens.MUL, Tokens.FLOATDIV, Tokens.DIV.type)):
