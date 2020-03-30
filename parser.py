@@ -99,7 +99,7 @@ class Parser:
 
 
     def eat(self, token_type):
-        print(f"curr: {self.current_token}, token_type: {token_type}")
+        # print(f"curr: {self.current_token}, token_type: {token_type}")
         if(self.current_token.type == token_type):
             self.current_token = self.lexer.get_next_token()
         else:
@@ -207,8 +207,6 @@ class Parser:
             self.eat(Tokens.SEMI)
             results.append(self.statement())
 
-        if self.current_token.type == Tokens.ID:
-            self.error()
 
         return results
 

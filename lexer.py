@@ -79,7 +79,7 @@ class Lexer:
             result += self.curr_char
             self.advance()
 
-        # return a Token
+        # RESERVED_KEYWORDS
         if(hasattr(Tokens, result)):
             return getattr(Tokens, result)
 
