@@ -28,6 +28,7 @@ class Tokens:
     ASSIGN      = "ASSIGN"
     SEMI        = "SEMI"
     DOT         = "DOT"
+    TERNARY     = "?"
 
     # RESERVED_KEYWORDS
     PROGRAM     = Token("PROGRAM", "PROGRAM")

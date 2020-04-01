@@ -105,6 +105,10 @@ class Lexer:
                 self.skip_comment()
                 continue
 
+            if self.curr_char == "?":
+                self.advance()
+                return Token(Tokens.TERNARY, "?")
+
             if self.curr_char.isdigit():
                 return self.number()
 

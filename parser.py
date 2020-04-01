@@ -236,6 +236,19 @@ class Parser:
         token = self.current_token
         self.eat(Tokens.ASSIGN)
         right = self.expr()
+        if self.current_token.type == Tokens.TERNARY:
+            self.eat(Tokens.TERNARY)
+            # we need to check the value returned from the right expr
+            if right.value:
+                right = self.expr()
+                self.eat(Tokens.COLON)
+                self.expr()
+
+            else:
+                self.expr()
+                self.eat(Tokens.COLON)
+                right = self.expr()
+
 
         node = Assign(left, token, right)
         return node
