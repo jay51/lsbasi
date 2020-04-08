@@ -38,7 +38,7 @@ class Tokens:
     BEGIN       = Token("BEGIN", "BEGIN")
     END         = Token("END", "END")
     DIV         = Token("INTDIV", "//")
-    # DIV         = Token("INTEGER_DIV", "DIV"),
+    PROCEDURE   = Token("PROCEDURE", "PROCEDURE")
     
     
     

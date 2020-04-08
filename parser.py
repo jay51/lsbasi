@@ -80,9 +80,15 @@ class VarDecl(AST):
 class Type(AST):
     def __init__(self, token):
         self.token = token
-
-
         self.value = token.value
+
+
+
+class ProcedureDecl(AST):
+    def __init__(self, proc_name, block_node):
+        self.proc_name = proc_name
+        self.block_node = block_node
+
 
 
 
@@ -141,7 +147,20 @@ class Parser:
                 declarations.extend(var_decl)
                 self.eat(Tokens.SEMI)
 
+
+        # parse ProcedureDecl to make AST node
+        while(self.current_token.type == Tokens.PROCEDURE.type):
+            self.eat(Tokens.PROCEDURE.type)
+            proc_name = self.current_token.value
+            self.eat(Tokens.ID)
+            self.eat(Tokens.SEMI)
+            block_node = self.block()
+            proc_decl = ProcedureDecl(proc_name, block_node)
+            declarations.append(proc_decl)
+            self.eat(Tokens.SEMI)
+
         return declarations
+
 
 
     def variable_declaration(self):

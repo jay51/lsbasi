@@ -147,6 +147,11 @@ class SymbolTableBuilder(NodeVisitor):
 
 
 
+    def visit_ProcedureDecl(self, node):
+        pass
+
+
+
 
 
 class Interpreter(NodeVisitor):
@@ -169,6 +174,9 @@ class Interpreter(NodeVisitor):
     def visit_VarDecl(self, node):
         pass
 
+
+    def visit_ProcedureDecl(self, node):
+        pass
 
 
     def visit_Type(self, node):
@@ -247,6 +255,7 @@ if(__name__ == "__main__"):
 
             interpreter = Interpreter(tree)
             result = interpreter.interpret()
+            print("MEMORY contents:")
             print(interpreter.GLOBAL_SCOPE)
 
 
