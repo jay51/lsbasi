@@ -20,7 +20,10 @@ class ButiltinTypeSymbol(Symbol):
     def __str__(self):
         return self.name
 
-    __repr__ = __str__
+
+    def __repr__(self):
+        return "<{class_name}(name={name})>".format(class_name=self.__class__.__name__, name=self.name)
+
 
 
 
@@ -29,7 +32,11 @@ class VarSymbol(Symbol):
         super().__init__(name, type)
 
     def __str__(self):
-        return "<{name}:{type}>".format(name=self.name, type=self.type)
+        return "<{class_name}(name={name}, type={type})>".format(
+            class_name=self.__class__.__name__, 
+            name=self.name, 
+            type=self.type
+        )
 
     __repr__ = __str__
 
@@ -52,7 +59,13 @@ class SymbolTable:
 
 
 
+    # old method. Don't know what the fuck this guy is doing? I've not been in the mood this week!
     def define(self, symbol):
+        print("Define: %s" % symbol)
+        self._symbols[symbol.name] = symbol
+
+
+    def insert(self, symbol):
         print("Define: %s" % symbol)
         self._symbols[symbol.name] = symbol
 
@@ -76,7 +89,7 @@ class NodeVisitor:
 
 
 
-class SymbolTableBuilder(NodeVisitor):
+class SemanticAnalyzer(NodeVisitor):
     def __init__(self):
         self.symtab = SymbolTable()
 
@@ -125,6 +138,7 @@ class SymbolTableBuilder(NodeVisitor):
     def visit_Assign(self, node):
         var_name = node.left.value
         # self.GLOBAL_SCOPE[var_name] = self.visit(node.right)
+        # check if we've declared this var
         var_symbol = self.symtab.lookup(var_name)
         if not var_symbol:
             raise NameError(repr(var_name))
@@ -231,7 +245,6 @@ class Interpreter(NodeVisitor):
 
 
     def interpret(self):
-    # TREE IS A BINOP NODE OF LEFT AND RIGHT NODES
         tree = self.tree
         if tree:
             return self.visit(tree)
@@ -246,7 +259,7 @@ if(__name__ == "__main__"):
             lex = Lexer(file_stream)
             parser = Parser(lex)
             tree = parser.parse()
-            symtab_builder = SymbolTableBuilder()
+            symtab_builder = SemanticAnalyzer()
             symtab_builder.visit(tree)
             print("Symbol Table contents:")
             print(symtab_builder.symtab)
